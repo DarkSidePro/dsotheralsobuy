@@ -41,4 +41,7 @@
 .product--item .product-description,
 .product--item .thumbnail-container {
     width: auto;
+    position: relative;
+    height: unset;
+    box-shadow: none;
 }
