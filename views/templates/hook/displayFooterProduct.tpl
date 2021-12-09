@@ -23,6 +23,7 @@
 *  International Registered Trademark & Property of PrestaShop SA
 *}
 <div class="container-fluid card card-body p-1 mt-1">
+    <h2 class='h2'>{l s='Customers who bought this product also bought' mod='dsothersalsobought'}</h2>
     <div class="owl-carousel owl-theme">
         {foreach $products as $product}
             <div class="item product--item">
