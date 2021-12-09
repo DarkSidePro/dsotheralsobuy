@@ -59,18 +59,13 @@ class Dsothersalsobought extends Module
      */
     public function install()
     {
-        Configuration::updateValue('DSOTHERSALSOBOUGHT_LIVE_MODE', false);
-
         return parent::install() &&
             $this->registerHook('header') &&
-            $this->registerHook('backOfficeHeader') &&
             $this->registerHook('displayFooterProduct');
     }
 
     public function uninstall()
     {
-        Configuration::deleteByName('DSOTHERSALSOBOUGHT_LIVE_MODE');
-
         return parent::uninstall();
     }
 
@@ -79,134 +74,10 @@ class Dsothersalsobought extends Module
      */
     public function getContent()
     {
-        /**
-         * If values have been submitted in the form, process.
-         */
-        if (((bool)Tools::isSubmit('submitDsothersalsoboughtModule')) == true) {
-            $this->postProcess();
-        }
-
-        $this->context->smarty->assign('module_dir', $this->_path);
-
-        $output = $this->context->smarty->fetch($this->local_path.'views/templates/admin/configure.tpl');
-
-        return $output.$this->renderForm();
+        return;
     }
 
-    /**
-     * Create the form that will be displayed in the configuration of your module.
-     */
-    protected function renderForm()
-    {
-        $helper = new HelperForm();
 
-        $helper->show_toolbar = false;
-        $helper->table = $this->table;
-        $helper->module = $this;
-        $helper->default_form_language = $this->context->language->id;
-        $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG', 0);
-
-        $helper->identifier = $this->identifier;
-        $helper->submit_action = 'submitDsothersalsoboughtModule';
-        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false)
-            .'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
-        $helper->token = Tools::getAdminTokenLite('AdminModules');
-
-        $helper->tpl_vars = array(
-            'fields_value' => $this->getConfigFormValues(), /* Add values for your inputs */
-            'languages' => $this->context->controller->getLanguages(),
-            'id_language' => $this->context->language->id,
-        );
-
-        return $helper->generateForm(array($this->getConfigForm()));
-    }
-
-    /**
-     * Create the structure of your form.
-     */
-    protected function getConfigForm()
-    {
-        return array(
-            'form' => array(
-                'legend' => array(
-                'title' => $this->l('Settings'),
-                'icon' => 'icon-cogs',
-                ),
-                'input' => array(
-                    array(
-                        'type' => 'switch',
-                        'label' => $this->l('Live mode'),
-                        'name' => 'DSOTHERSALSOBOUGHT_LIVE_MODE',
-                        'is_bool' => true,
-                        'desc' => $this->l('Use this module in live mode'),
-                        'values' => array(
-                            array(
-                                'id' => 'active_on',
-                                'value' => true,
-                                'label' => $this->l('Enabled')
-                            ),
-                            array(
-                                'id' => 'active_off',
-                                'value' => false,
-                                'label' => $this->l('Disabled')
-                            )
-                        ),
-                    ),
-                    array(
-                        'col' => 3,
-                        'type' => 'text',
-                        'prefix' => '<i class="icon icon-envelope"></i>',
-                        'desc' => $this->l('Enter a valid email address'),
-                        'name' => 'DSOTHERSALSOBOUGHT_ACCOUNT_EMAIL',
-                        'label' => $this->l('Email'),
-                    ),
-                    array(
-                        'type' => 'password',
-                        'name' => 'DSOTHERSALSOBOUGHT_ACCOUNT_PASSWORD',
-                        'label' => $this->l('Password'),
-                    ),
-                ),
-                'submit' => array(
-                    'title' => $this->l('Save'),
-                ),
-            ),
-        );
-    }
-
-    /**
-     * Set values for the inputs.
-     */
-    protected function getConfigFormValues()
-    {
-        return array(
-            'DSOTHERSALSOBOUGHT_LIVE_MODE' => Configuration::get('DSOTHERSALSOBOUGHT_LIVE_MODE', true),
-            'DSOTHERSALSOBOUGHT_ACCOUNT_EMAIL' => Configuration::get('DSOTHERSALSOBOUGHT_ACCOUNT_EMAIL', 'contact@prestashop.com'),
-            'DSOTHERSALSOBOUGHT_ACCOUNT_PASSWORD' => Configuration::get('DSOTHERSALSOBOUGHT_ACCOUNT_PASSWORD', null),
-        );
-    }
-
-    /**
-     * Save form data.
-     */
-    protected function postProcess()
-    {
-        $form_values = $this->getConfigFormValues();
-
-        foreach (array_keys($form_values) as $key) {
-            Configuration::updateValue($key, Tools::getValue($key));
-        }
-    }
-
-    /**
-    * Add the CSS & JavaScript files you want to be loaded in the BO.
-    */
-    public function hookBackOfficeHeader()
-    {
-        if (Tools::getValue('module_name') == $this->name) {
-            $this->context->controller->addJS($this->_path.'views/js/back.js');
-            $this->context->controller->addCSS($this->_path.'views/css/back.css');
-        }
-    }
 
     /**
      * Add the CSS & JavaScript files you want to be added on the FO.
@@ -215,10 +86,97 @@ class Dsothersalsobought extends Module
     {
         $this->context->controller->addJS($this->_path.'/views/js/front.js');
         $this->context->controller->addCSS($this->_path.'/views/css/front.css');
+        $this->context->controller->addCSS($this->_path.'/views/css/owl.carousel.min.css');
+        $this->context->controller->addCSS($this->_path.'/views/css/owl.theme.default.min.css');
+        $this->context->controller->addJS($this->_path.'/views/js/owl.carousel.min.js');
+
+
+        $this->context->controller->registerJavascript(4, $this->_path.'/views/js/front.js'); 
+        $this->context->controller->registerJavascript(2, $this->_path.'/views/js/owl.carousel.min.js');    
+        $this->context->controller->registerStylesheet(1, $this->_path.'/views/css/front.css');
+        $this->context->controller->registerStylesheet(2, $this->_path.'/views/css/owl.carousel.min.css');
+        $this->context->controller->registerStylesheet(3, $this->_path.'/views/css/owl.theme.default.min.css');
     }
 
-    public function hookDisplayFooterProduct()
+    public function hookDisplayFooterProduct($params)
     {
-        /* Place your code here. */
+        $id_product = $params['product']['id'];
+        $id_lang = $this->context->cookie->id_lang;
+        $productIds = $this->getProductIds($id_product);
+        $products = array();
+
+        foreach ($productIds as $product) {
+            $productId = $product['product_id'];
+            $productDetails = $this->getProductDetails($productId, $id_lang);
+            $productName = $productDetails->name;
+            $productLink = $this->context->link->getProductLink($productId);
+            $image = Product::getCover($productId);
+            $imageurl = $this->context->link->getImageLink($productDetails->link_rewrite, $image['id_image'], 'home_default');
+
+            $productPriceNetto = Product::getPriceStatic($productId, false);
+            $productPriceBrutto = Product::getPriceStatic($productId, true);
+
+            array_push($products, [
+                'product_name' => $productName, 
+                'product_image' => $imageurl, 
+                'product_id' => $productId, 
+                'product_price_netto' => Tools::displayPrice($productPriceNetto), 
+                'product_price_brutto' => Tools::displayPrice($productPriceBrutto),
+                'product_link' => $productLink
+                ]
+            );
+        }
+
+        $this->context->smarty->assign('products', $products);
+
+        return $this->display(__FILE__, 'displayFooterProduct.tpl');
+    }
+
+    protected function getProductIds(int $id_product): array
+    {
+        $db = \Db::getInstance();
+        $sql = 'SELECT a.product_id, count(a.product_id) cnt
+        FROM (
+            SELECT DISTINCT product_id, id_order 
+            FROM '._DB_PREFIX_.'order_detail 
+            WHERE id_order IN (
+                SELECT id_order
+                FROM '._DB_PREFIX_.'order_detail 
+                WHERE product_id = '.$id_product.')
+            AND product_id <> '.$id_product.'
+            ) a
+        JOIN '._DB_PREFIX_.'product b on a.product_id = b.id_product
+        GROUP BY a.product_id
+        UNION
+        SELECT id_product product_id, 0 cnt
+        FROM `'._DB_PREFIX_.'product` a
+        left JOIN (
+            SELECT a.product_id
+            FROM (
+                SELECT DISTINCT product_id
+                FROM '._DB_PREFIX_.'order_detail 
+                WHERE id_order IN (
+                    SELECT id_order
+                    FROM '._DB_PREFIX_.'order_detail 
+                    WHERE product_id = '.$id_product.')
+                AND product_id <> '.$id_product.'
+                ) a
+        ) b on b.product_id = a.id_product
+        WHERE id_category_default = (
+            SELECT id_category_default
+            FROM `'._DB_PREFIX_.'product` WHERE id_product = '.$id_product.')
+            AND id_product <> '.$id_product.' AND b.product_id IS NULL
+        order by cnt desc
+        limit 8';
+        $result = $db->executeS($sql);
+
+        return $result;
+    }
+
+    protected function getProductDetails(int $id_product, int $id_lang): Product
+    {
+        $product = new Product($id_product, false, $id_lang);
+
+        return $product;
     }
 }
