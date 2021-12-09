@@ -84,15 +84,16 @@ class Dsothersalsobought extends Module
      */
     public function hookHeader()
     {
-        $this->context->controller->addJS($this->_path.'/views/js/front.js');
         $this->context->controller->addCSS($this->_path.'/views/css/front.css');
         $this->context->controller->addCSS($this->_path.'/views/css/owl.carousel.min.css');
         $this->context->controller->addCSS($this->_path.'/views/css/owl.theme.default.min.css');
         $this->context->controller->addJS($this->_path.'/views/js/owl.carousel.min.js');
+        $this->context->controller->addJS($this->_path.'/views/js/front.js');
 
 
+
+        $this->context->controller->registerJavascript(1, $this->_path.'/views/js/owl.carousel.min.js');
         $this->context->controller->registerJavascript(4, $this->_path.'/views/js/front.js'); 
-        $this->context->controller->registerJavascript(2, $this->_path.'/views/js/owl.carousel.min.js');    
         $this->context->controller->registerStylesheet(1, $this->_path.'/views/css/front.css');
         $this->context->controller->registerStylesheet(2, $this->_path.'/views/css/owl.carousel.min.css');
         $this->context->controller->registerStylesheet(3, $this->_path.'/views/css/owl.theme.default.min.css');
