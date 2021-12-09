@@ -6,6 +6,6 @@
 	<description><![CDATA[This module display a product list in the product page with products with also bought with current product]]></description>
 	<author><![CDATA[Dark-Side.pro]]></author>
 	<tab><![CDATA[front_office_features]]></tab>
-	<is_configurable>1</is_configurable>
-	<need_instance>1</need_instance>
+	<is_configurable>0</is_configurable>
+	<need_instance>0</need_instance>
 </module>
